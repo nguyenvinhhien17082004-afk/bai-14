@@ -1,0 +1,16 @@
+#include<iostream>
+#include<queue>
+using namespace std;
+struct hangxom{
+	int idhangxom;
+	string khoangcach;
+	hangxom*tieptheo;
+};
+struct dinh{
+	char tendinh;
+	hangxom*diachidau;
+};
+void noidinh(dinh g[],int u,int v,string w){
+	hangxom*dinhmoi=new hangxom{v,w,g[u]diachidau};
+	g[u].diachidau=dinhmoi;
+}
