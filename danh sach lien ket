@@ -1,16 +1,113 @@
-#include<iostream>
-#include<queue>
+#include <iostream>
+#include <string>
+
 using namespace std;
-struct hangxom{
-	int idhangxom;
-	string khoangcach;
-	hangxom*tieptheo;
+
+struct hangxom {
+    string tenhangxom;
+    string khoangcach;
+    hangxom* tieptheo;
 };
-struct dinh{
-	char tendinh;
-	hangxom*diachidau;
+
+struct dinh {
+    string tendinh;
+    hangxom* diachidau;
 };
-void noidinh(dinh g[],int u,int v,string w){
-	hangxom*dinhmoi=new hangxom{v,w,g[u]diachidau};
-	g[u].diachidau=dinhmoi;
+
+dinh dothi[100];
+int so_dinh = 0;
+
+int tim_hoac_tao_dinh(string ten) {
+    for (int i = 0; i < so_dinh; i++) {
+        if (dothi[i].tendinh == ten) {
+            return i;
+        }
+    }
+    dothi[so_dinh].tendinh = ten;
+    dothi[so_dinh].diachidau = nullptr;
+    so_dinh++;
+    return so_dinh - 1;
+}
+
+void noidinh(string u, string v, string w) {
+    int vi_tri_u = tim_hoac_tao_dinh(u);
+    int vi_tri_v = tim_hoac_tao_dinh(v);
+
+    hangxom* nut_v = new hangxom{v, w, dothi[vi_tri_u].diachidau};
+    dothi[vi_tri_u].diachidau = nut_v;
+
+    hangxom* nut_u = new hangxom{u, w, dothi[vi_tri_v].diachidau};
+    dothi[vi_tri_v].diachidau = nut_u;
+}
+
+string mang_daduyet[100];
+int so_daduyet = 0;
+
+bool kiemtra_daduyet(string ten) {
+    for (int i = 0; i < so_daduyet; i++) {
+        if (mang_daduyet[i] == ten) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void duyetbfs(string dinhbatdau) {
+    string hangdoi[100];
+    int dau = 0;
+    int cuoi = 0;
+
+    hangdoi[cuoi] = dinhbatdau;
+    cuoi++;
+
+    mang_daduyet[so_daduyet] = dinhbatdau;
+    so_daduyet++;
+
+    cout << "Thu tu duyet BFS bat dau tu dinh " << dinhbatdau << ":\n";
+
+    while (dau < cuoi) {
+        string hientai = hangdoi[dau];
+        dau++;
+        
+        cout << hientai << " ";
+
+        int vi_tri = tim_hoac_tao_dinh(hientai);
+        hangxom* hxhientai = dothi[vi_tri].diachidau;
+        
+        while (hxhientai != nullptr) {
+            string tenke = hxhientai->tenhangxom;
+            
+            if (kiemtra_daduyet(tenke) == false) {
+                hangdoi[cuoi] = tenke;
+                cuoi++;
+                
+                mang_daduyet[so_daduyet] = tenke;
+                so_daduyet++;
+            }
+            
+            hxhientai = hxhientai->tieptheo;
+        }
+    }
+    cout << endl;
+}
+
+int main() {
+    noidinh("HN", "HD", "D1");
+    noidinh("HN", "PL", "D4");
+    noidinh("HN", "HB", "D5");
+    noidinh("HN", "ST", "D6");
+    noidinh("HN", "TN", "D7");
+    noidinh("HN", "BN", "D8");
+
+    noidinh("HD", "HY", "D2");
+    noidinh("PL", "HY", "D3");
+    noidinh("BN", "BG", "D9");
+    noidinh("BG", "UB", "D10");
+    noidinh("BN", "UB", "D11");
+    noidinh("UB", "HP", "D12");
+    noidinh("HP", "HD", "D13");
+
+    duyetbfs("HN");
+
+    return 0;
 }
